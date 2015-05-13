@@ -19,54 +19,55 @@ names(df_x_test) <- "X2" ## fix the header name problem in the data file
 df_y_train <- read.csv(flist_train[3],colClasses = "character")
 df_y_test <- read.csv(flist_test[3],colClasses = "character")
 ## combine the subject, x measures, and position variable into 2 data frames (train & test)
-df_combined_train<- cbind(df_subject_train,df_x_train,df_y_train)
-df_combined_test<- cbind(df_subject_test,df_x_test,df_y_test)
-names(df_combined_train) <- c("Subject","Measures","Activity") ##name the columns to describe the data contained in the observations
-names(df_combined_test) <- c("Subject","Measures","Activity") ##name the columns to describe the data contained in the observations
+df_combined_train<- cbind(df_subject_train,df_y_train, df_x_train)
+df_combined_test<- cbind(df_subject_test,df_y_test, df_x_test)
+names(df_combined_train) <- c("Subject","Activity","Measures") ##name the columns to describe the data contained in the observations
+names(df_combined_test) <- c("Subject","Activity","Measures")##name the columns to describe the data contained in the observations
 ## begin apply the activity labels to the data sets (at this point train and test are still separate)  *NOTE - clean this up with lapply*
 for (i in 1:nrow(df_combined_train)) {
-    if (df_combined_train[i,3] == "1") {
-        df_combined_train[i,3] <- df_activity_labels[1,1]
+    if (df_combined_train[i,2] == "1") {
+        df_combined_train[i,2] <- df_activity_labels[1,1]
     }
-    if (df_combined_train[i,3] == "2") {
-        df_combined_train[i,3] <- df_activity_labels[2,1]
+    if (df_combined_train[i,2] == "2") {
+        df_combined_train[i,2] <- df_activity_labels[2,1]
     }
-    if (df_combined_train[i,3] == "3") {
-        df_combined_train[i,3] <- df_activity_labels[3,1]
+    if (df_combined_train[i,2] == "3") {
+        df_combined_train[i,2] <- df_activity_labels[3,1]
     }
-    if (df_combined_train[i,3] == "4") {
-        df_combined_train[i,3] <- df_activity_labels[4,1]
+    if (df_combined_train[i,2] == "4") {
+        df_combined_train[i,2] <- df_activity_labels[4,1]
     }
-    if (df_combined_train[i,3] == "5") {
-        df_combined_train[i,3] <- df_activity_labels[5,1]
+    if (df_combined_train[i,2] == "5") {
+        df_combined_train[i,2] <- df_activity_labels[5,1]
     }
-    if (df_combined_train[i,3] == "6") {
-        df_combined_train[i,3] <- df_activity_labels[6,1]
+    if (df_combined_train[i,2] == "6") {
+        df_combined_train[i,2] <- df_activity_labels[6,1]
     }
 }
 for (i in 1:nrow(df_combined_test)) {
-    if (df_combined_test[i,3] == "1") {
-        df_combined_test[i,3] <- df_activity_labels[1,1]
+    if (df_combined_test[i,2] == "1") {
+        df_combined_test[i,2] <- df_activity_labels[1,1]
     }
-    if (df_combined_test[i,3] == "2") {
-        df_combined_test[i,3] <- df_activity_labels[2,1]
+    if (df_combined_test[i,2] == "2") {
+        df_combined_test[i,2] <- df_activity_labels[2,1]
     }
-    if (df_combined_test[i,3] == "3") {
-        df_combined_test[i,3] <- df_activity_labels[3,1]
+    if (df_combined_test[i,2] == "3") {
+        df_combined_test[i,2] <- df_activity_labels[3,1]
     }
-    if (df_combined_test[i,3] == "4") {
-        df_combined_test[i,3] <- df_activity_labels[4,1]
+    if (df_combined_test[i,2] == "4") {
+        df_combined_test[i,2] <- df_activity_labels[4,1]
     }
-    if (df_combined_test[i,3] == "5") {
-        df_combined_test[i,3] <- df_activity_labels[5,1]
+    if (df_combined_test[i,2] == "5") {
+        df_combined_test[i,2] <- df_activity_labels[5,1]
     }
-    if (df_combined_test[i,3] == "6") {
-        df_combined_test[i,3] <- df_activity_labels[6,1]
+    if (df_combined_test[i,2] == "6") {
+        df_combined_test[i,2] <- df_activity_labels[6,1]
     }
 }
 ## end apply the activity labels to the data set
 df_merged <- merge(df_combined_train,df_combined_test,all=TRUE)  ##combine train and test
-
+df_merged <- separate(df_merged,Measures,df_feature_labels[,2], sep=" ",extra="drop") ##use dplyr to separate the factor array into columns
+#df_merged[,2] <- lapply(df_merged[,2], strsplit,",")
 # df_merged[, v_final_feature_labels] <- NA  ##add columns for 66 features -std or -mean
 
 ## rm(list = ls())
