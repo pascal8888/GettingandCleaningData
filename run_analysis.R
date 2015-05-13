@@ -66,6 +66,7 @@ for (i in 1:nrow(df_combined_test)) {
 }
 ## end apply the activity labels to the data set
 df_merged <- merge(df_combined_train,df_combined_test,all=TRUE)  ##combine train and test
-df_merged[, v_final_feature_labels] <- v_final_feature_labels  ##add columns for 66 features -std or -mean
+
+# df_merged[, v_final_feature_labels] <- NA  ##add columns for 66 features -std or -mean
 
 ## rm(list = ls())
