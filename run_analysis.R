@@ -1,10 +1,10 @@
 path_activity_labels <- paste(getwd(),"/UCI HAR Dataset/activity_labels.txt",sep="")  ##set the path including file name for the activity labels text file
-path_feature_labels <- paste(getwd(),"/UCI HAR Dataset/features.txt",sep="")  ##set the path including file name for the activity labels text file
+path_feature_labels <- paste(getwd(),"/UCI HAR Dataset/features.txt",sep="")  ##set the path including file name for the feature labels text file
 df_activity_labels <- read.csv(path_activity_labels,header=FALSE,colClasses = "character")  ##read the activity labels into a data frame as character
 df_feature_labels <- read.csv(path_feature_labels,header=FALSE,sep="",colClasses = "character")  ##read the feature labels into a data frame as character
 tmp1 <- grep(pattern="-std()",x=df_feature_labels[,2],fixed=TRUE)  ##tmp1 holds the indices for labels that have "-std()" in the name
 tmp2 <- grep(pattern="-mean()",x=df_feature_labels[,2],fixed=TRUE) ##tmp2 holds the indices for labels that have "-mean()" in the name
-tmp3 <- c(tmp1,tmp2)  ##join tmp1 and tmp2 vectors to get a vector of indices of df_feature_labels with our desired meausurements
+tmp3 <- c(tmp1,tmp2)  ##join tmp1 and tmp2 vectors to get a vector of indices of df_feature_labels with our desired measurements
 v_final_feature_labels <- unlist(df_feature_labels[tmp3,2]) ##vector of measurement labels
 path_train <- paste(getwd(),"/UCI HAR Dataset/train",sep="")  ##set the directory for training dataset to a subdirectory of the working directory
 path_test <- paste(getwd(),"/UCI HAR Dataset/test",sep="")  ##set the directory for testing dataset to a subdirectory of the working directory
