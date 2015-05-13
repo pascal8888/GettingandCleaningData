@@ -66,7 +66,7 @@ for (i in 1:nrow(df_combined_test)) {
 }
 ## end apply the activity labels to the data set
 df_merged <- merge(df_combined_train,df_combined_test,all=TRUE)  ##combine train and test
-df_merged <- separate(df_merged,Measures,df_feature_labels[,2], sep=",",extra="drop") ##use dplyr to separate the factor array into columns
+df_merged <- separate(df_merged,Measures,df_feature_labels[,2], sep=" ",convert=TRUE,extra="drop") ##use dplyr to separate the factor array into columns
 #df_merged[,2] <- lapply(df_merged[,2], strsplit,",")
 # df_merged[, v_final_feature_labels] <- NA  ##add columns for 66 features -std or -mean
 
