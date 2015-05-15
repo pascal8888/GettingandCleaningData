@@ -1,73 +1,51 @@
-path_activity_labels <- paste(getwd(),"/UCI HAR Dataset/activity_labels.txt",sep="")  ##set the path including file name for the activity labels text file
-path_feature_labels <- paste(getwd(),"/UCI HAR Dataset/features.txt",sep="")  ##set the path including file name for the feature labels text file
-df_activity_labels <- read.csv(path_activity_labels,header=FALSE,colClasses = "character")  ##read the activity labels into a data frame as character
-df_feature_labels <- read.csv(path_feature_labels,header=FALSE,sep="",colClasses = "character")  ##read the feature labels into a data frame as character
-tmp1 <- grep(pattern="-std()",x=df_feature_labels[,2],fixed=TRUE)  ##tmp1 holds the indices for labels that have "-std()" in the name
-tmp2 <- grep(pattern="-mean()",x=df_feature_labels[,2],fixed=TRUE) ##tmp2 holds the indices for labels that have "-mean()" in the name
-tmp3 <- c(tmp1,tmp2)  ##join tmp1 and tmp2 vectors to get a vector of indices of df_feature_labels with our desired measurements
-v_final_feature_labels <- unlist(df_feature_labels[tmp3,2]) ##vector of measurement labels
-path_train <- paste(getwd(),"/UCI HAR Dataset/train",sep="")  ##set the directory for training dataset to a subdirectory of the working directory
-path_test <- paste(getwd(),"/UCI HAR Dataset/test",sep="")  ##set the directory for testing dataset to a subdirectory of the working directory
-flist_train <- list.files(path_train, full.names = TRUE, recursive=TRUE)
-flist_test <- list.files(path_test, full.names = TRUE, recursive=TRUE)
-df_subject_train <- read.csv(flist_train[1],colClasses = "character")
-df_subject_test <- read.csv(flist_test[1],colClasses = "character")
-df_x_train <- read.csv(flist_train[2],header=TRUE)
-df_x_test <- read.csv(flist_test[2],header=TRUE)
-names(df_x_train) <- "X2" ## fix the header name problem in the data file
-names(df_x_test) <- "X2" ## fix the header name problem in the data file
-df_y_train <- read.csv(flist_train[3],colClasses = "character")
-df_y_test <- read.csv(flist_test[3],colClasses = "character")
-## combine the subject, x measures, and position variable into 2 data frames (train & test)
-df_combined_train<- cbind(df_subject_train,df_y_train, df_x_train)
-df_combined_test<- cbind(df_subject_test,df_y_test, df_x_test)
-names(df_combined_train) <- c("Subject","Activity","Measures") ##name the columns to describe the data contained in the observations
-names(df_combined_test) <- c("Subject","Activity","Measures")##name the columns to describe the data contained in the observations
-## begin apply the activity labels to the data sets (at this point train and test are still separate)  *NOTE - clean this up with lapply*
-for (i in 1:nrow(df_combined_train)) {
-    if (df_combined_train[i,2] == "1") {
-        df_combined_train[i,2] <- df_activity_labels[1,1]
-    }
-    if (df_combined_train[i,2] == "2") {
-        df_combined_train[i,2] <- df_activity_labels[2,1]
-    }
-    if (df_combined_train[i,2] == "3") {
-        df_combined_train[i,2] <- df_activity_labels[3,1]
-    }
-    if (df_combined_train[i,2] == "4") {
-        df_combined_train[i,2] <- df_activity_labels[4,1]
-    }
-    if (df_combined_train[i,2] == "5") {
-        df_combined_train[i,2] <- df_activity_labels[5,1]
-    }
-    if (df_combined_train[i,2] == "6") {
-        df_combined_train[i,2] <- df_activity_labels[6,1]
-    }
-}
-for (i in 1:nrow(df_combined_test)) {
-    if (df_combined_test[i,2] == "1") {
-        df_combined_test[i,2] <- df_activity_labels[1,1]
-    }
-    if (df_combined_test[i,2] == "2") {
-        df_combined_test[i,2] <- df_activity_labels[2,1]
-    }
-    if (df_combined_test[i,2] == "3") {
-        df_combined_test[i,2] <- df_activity_labels[3,1]
-    }
-    if (df_combined_test[i,2] == "4") {
-        df_combined_test[i,2] <- df_activity_labels[4,1]
-    }
-    if (df_combined_test[i,2] == "5") {
-        df_combined_test[i,2] <- df_activity_labels[5,1]
-    }
-    if (df_combined_test[i,2] == "6") {
-        df_combined_test[i,2] <- df_activity_labels[6,1]
-    }
-}
-## end apply the activity labels to the data set
-df_merged <- merge(df_combined_train,df_combined_test,all=TRUE)  ##combine train and test
-df_merged <- separate(df_merged,Measures,df_feature_labels[,2], sep=" ",convert=TRUE,extra="drop") ##use dplyr to separate the factor array into columns
-#df_merged[,2] <- lapply(df_merged[,2], strsplit,",")
-# df_merged[, v_final_feature_labels] <- NA  ##add columns for 66 features -std or -mean
+##
+## STEP 1 <- Merges the training and the test sets to create one data set.
+##
+##  Get the source data set  (uncomment lines 4 - 14 when finished so we don't have to download every time it is run while developing the script - also - remove the text in parentheses on this line)
+# if (!file.exists("uci_dataset.zip")) {
+#     download.file("https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip ",
+#                   "uci_dataset.zip", "curl", TRUE)
+# }
+#
+# # Extract the archive contents to the current working subdirectory.
+#
+# if (!file.exists("UCI HAR Dataset")) {
+#     unzip("uci_dataset.zip")
+# }
+##Read the files into vectors for the labels and data frames to hold the values of subject, activity, and measures
+vctr_activity_names <- read.table('UCI HAR Dataset/activity_labels.txt', as.is = TRUE)[, 2] ##col 2 only
+vctr_feature_labels <- read.table('UCI HAR Dataset/features.txt', as.is = TRUE)[, 2] ##col 2 only
+df_test_subject <- read.table("UCI HAR Dataset/test/subject_test.txt")
+df_train_subject <- read.table("UCI HAR Dataset/train/subject_train.txt")
+df_test_activity <- read.table("UCI HAR Dataset/test/y_test.txt")
+df_train_activity <- read.table("UCI HAR Dataset/train/y_train.txt")
+df_test_measures <- read.table('UCI HAR Dataset/test/X_test.txt')
+df_train_measures <- read.table('UCI HAR Dataset/train/X_train.txt')
+##Combine the data frames
+df_combined <-
+    cbind(
+        rbind(df_train_activity, df_test_activity),
+        rbind(df_train_subject, df_test_subject),
+        rbind(df_train_measures, df_test_measures)
+    )
+##Grep the feature labels to grab only those with "-std()" or "-mean()" in the name
+std_filter<- grep(pattern="-std()",x=vctr_feature_labels,fixed=TRUE)
+mean_filter <- grep(pattern="-mean()",x=vctr_feature_labels,fixed=TRUE)
+combined_filter <- c(std_filter,mean_filter)
+vctr_final_feature_labels <- unlist(vctr_feature_labels[combined_filter])
+##Set the column names
+names(df_combined) <- c("Activity","Subject",vctr_feature_labels)
+##
+## STEP 3 <- Uses descriptive activity names to name the activities in the data set
+##
+##Translate the activity codes and replace the values with the verbs, Thanks to community for grep help!
+vctr_activity_names <-
+    paste(
+        substr(vctr_activity_names , 1, 1),
+        sub("_", "", substr(vctr_activity_names , 2, max(nchar(vctr_activity_names )))),
+        sep = ""
+    )
+df_combined$Activity <- vctr_activity_names [df_combined$Activity]
 
-## rm(list = ls())
+##remove objects from environment that are no longer needed
+rm("vctr_activity_names","vctr_feature_labels","df_test_subject","df_train_subject","df_test_activity","df_train_activity","df_test_measures","df_train_measures","combined_filter","std_filter","mean_filter")
