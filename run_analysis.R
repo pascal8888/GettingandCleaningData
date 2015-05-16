@@ -52,12 +52,13 @@ df_combined <- df_combined[, grep("Freq",invert=TRUE,names(df_combined))]
 ## STEP 5 <- From the data set in step 4, creates a second, independent tidy data set with the average of each variable for each activity and each subject. Good luck!
 ##
 library(reshape2)
+## use melt to break down the measures into key pairs to prepare to cast
 finaldata <- melt(df_combined, id=c("Subject","Activity"), measure.vars = colnames(df_combined[, grep("mean|std", colnames(df_combined))]))
+## use cast to set the final data frame calculating the mean and grouping by Subject (30) and Activity (6). which results in 180 rows of 68 variables.
 finaldata <- dcast(finaldata, Subject + Activity ~ variable, mean)
-
-# Save tidy dataset to file.
-
+## final result
 write.table(finaldata, file="finaldata.txt", row.names = FALSE)
+View(read.table("finaldata.txt",header=T))
 ##remove objects from environment that are no longer needed
-rm("vctr_activity_names","vctr_feature_labels","df_test_subject","df_train_subject","df_test_activity","df_train_activity","df_test_measures","df_train_measures")
-#rm(list=ls())
+rm("vctr_activity_names","vctr_feature_labels","df_test_subject","df_train_subject","df_test_activity","df_train_activity","df_test_measures","df_train_measures","df_combined")
+print("Data has been processed. finaldata.txt has been written to the working directory. It contains the tidy data set of the mean of each subject's activities across each feature measurement. The file has been loaded for viewing and the data frame has been left in the R environment")
