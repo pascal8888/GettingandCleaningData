@@ -10,5 +10,10 @@ Via Opera Pia 11A, I-16145, Genoa, Italy.
 activityrecognition@smartlab.ws
 www.smartlab.ws
 ==================================================================
-This data set contains the mean of standard deviation and mean of 66 feature measures for 30 subjects across 6 activities.  It was derived from the study data which can be found here: https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip
-
+This data set contains the mean of standard deviation and mean of 66 feature measures for 30 subjects across 6 activities.  It was derived from the study data which will be described below.
+#DESCRIPTION OF run_analysis.R SCRIPT
+1. STEP 1 <- Merges the training and the test sets to create one data set.
+    1. kkk
+    2. kkk
+    3. kjj
+2. asdff
